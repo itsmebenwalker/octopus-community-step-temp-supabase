@@ -2,16 +2,8 @@ step "supabase-run-migrations" {
     name = "Supabase - Run Migrations"
 
     action {
-        packages {
-            acquisition_location = "Server"
-            package_id = "supabase-migrations"
-            properties = {
-                Extract = "True"
-                SelectionMode = "immediate"
-            }
-        }
         properties = {
-            Octopus.Action.Template.Id = "ActionTemplates-8"
+            Octopus.Action.Template.Id = "ActionTemplates-9"
             Octopus.Action.Template.Version = "1"
             SupabaseAccessToken = "#{SupabaseAccessToken}"
             SupabaseCliVersion = "#{SupabaseCliVersion}"
