@@ -4,7 +4,6 @@ step "supabase-run-migrations" {
     action {
         packages {
             acquisition_location = "Server"
-            feed = "feeds-builtin"
             package_id = "supabase-migrations"
             properties = {
                 Extract = "True"
