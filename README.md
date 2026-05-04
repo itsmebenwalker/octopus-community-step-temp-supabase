@@ -4,6 +4,7 @@ This is a sample Supabase project for testing the Octopus Deploy Community Step 
 
 ## Project Structure
 
+- `.github`: Github Actions for package deployments into Octopus Deploy
 - `supabase/config.toml`: Supabase project configuration
 - `supabase/migrations/`: Database migration files
   - `20240101000000_initial_schema.sql`: Creates users, posts, and comments tables with RLS policies
