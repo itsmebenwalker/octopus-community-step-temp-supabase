@@ -1,12 +1,8 @@
 step "supabase-run-migrations" {
     name = "Supabase - Run Migrations"
-    properties = {
-        Octopus.Action.TargetRoles = "octopus-community-step-temp-supabase-targets"
-    }
 
     action {
         properties = {
-            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Template.Id = "ActionTemplates-2"
             Octopus.Action.Template.Version = "1"
             SupabaseAccessToken = "#{SupabaseAccessToken}"
@@ -14,6 +10,6 @@ step "supabase-run-migrations" {
             SupabaseDbPassword = "#{SupabaseDbPassword}"
             SupabaseProjectRef = "#{SupabaseProjectRef}"
         }
-        worker_pool_variable = ""
+        worker_pool = "hosted-ubuntu"
     }
 }
