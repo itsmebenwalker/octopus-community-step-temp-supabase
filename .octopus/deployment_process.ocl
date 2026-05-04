@@ -11,7 +11,7 @@ step "supabase-run-migrations" {
             }
         }
         properties = {
-            Octopus.Action.Template.Id = "ActionTemplates-9"
+            Octopus.Action.Template.Id = "ActionTemplates-10"
             Octopus.Action.Template.Version = "1"
             SupabaseAccessToken = "#{SupabaseAccessToken}"
             SupabaseCliVersion = "#{SupabaseCliVersion}"
