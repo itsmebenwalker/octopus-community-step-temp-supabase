@@ -4,6 +4,19 @@
 
 ---
 
+## Background
+
+[Supabase](https://supabase.com) is an open-source Firebase alternative built on PostgreSQL, offering a managed database, authentication, storage, realtime subscriptions, and **Edge Functions**: globally-distributed TypeScript/Deno serverless functions deployed to a CDN edge network.
+
+Supabase has become the backend platform of choice for a new wave of developers building with AI-assisted tools. The auto-generated TypeScript SDK, instant REST and GraphQL APIs, and the Supabase CLI make it straightforward for an AI agent to scaffold and iterate on a backend — meaning many Octopus customers are now deploying Supabase-backed applications as part of their release pipelines, with Edge Functions increasingly where business logic lives.
+
+This repository contains two companion step templates:
+
+- **`Supabase - Run Migrations`** — pushes database schema changes
+- **`Supabase - Deploy Edge Function`** — deploys Edge Functions
+
+---
+
 ## Step Templates
 
 ### Supabase - Run Migrations
@@ -18,38 +31,45 @@ Located at `Library/step-templates/supabase-run-migrations.json`.
 
 **Parameters:**
 
-| Parameter | Description | Required | Default |
-|-----------|-------------|----------|---------|
-| `SupabaseProjectRef` | The unique identifier of your Supabase project | Yes | — |
-| `SupabaseDbPassword` | Password for the PostgreSQL database user | Yes | — |
-| `SupabaseAccessToken` | Supabase access token for CLI authentication | Yes | — |
-| `SupabaseCliVersion` | Version of the Supabase CLI to install | No | `latest` |
+| Parameter | Type | Required | Default |
+|-----------|------|----------|---------|
+| `SupabaseProjectRef` | String | Yes | — |
+| `SupabaseDbPassword` | Sensitive | Yes | — |
+| `SupabaseAccessToken` | Sensitive | Yes | — |
+| `SupabaseCliVersion` | String | No | `latest` |
 
 ---
 
 ### Supabase - Deploy Edge Function
 
-Deploys one or all edge functions to a Supabase project.
+Located at `Library/step-templates/supabase-deploy-edge-function.json`.
+
+Before this step existed, deploying Supabase Edge Functions from an Octopus deployment required a custom **Run a Script** step — manually scripting the CLI install, authentication, and deploy command for each project. This step replaces all of that: attach the package containing `supabase/functions/`, supply the project ref and access token, and the step handles the rest.
 
 **What it does:**
 
-1. Installs the Supabase CLI if not already present
-2. Authenticates using the provided access token
-3. Deploys the specified function (or all functions with `--all`) using `supabase functions deploy`
-4. Optionally runs a smoke test — an HTTP GET to the deployed function URL — and validates the response code
+1. Installs the Supabase CLI on the worker if not already present (Linux binary from GitHub releases, Homebrew on macOS), with optional version pinning
+2. Authenticates via `SUPABASE_ACCESS_TOKEN` — no interactive login required, safe for CI/CD workers
+3. Resolves the working directory from the extracted package (`#{Octopus.Action.Package[supabase-migrations].ExtractedPath}`) with a fallback to the current directory, matching the pattern used by the `Supabase - Run Migrations` step
+4. Deploys a named function or all functions in the package
+5. Optionally disables JWT verification (`--no-verify-jwt`) for public functions
+6. Optionally accepts a custom import map path
+7. Runs an optional post-deploy smoke test: `GET` the function URL and asserts a non-5xx response — a `401` is treated as a pass (expected when JWT verification is enabled)
 
 **Parameters:**
 
-| Parameter | Description | Required | Default |
-|-----------|-------------|----------|---------|
-| `SupabaseProjectRef` | The unique identifier of your Supabase project | Yes | — |
-| `SupabaseAccessToken` | Supabase access token (`sbp_...`) for CLI authentication | Yes | — |
-| `FunctionName` | Name of the function to deploy (e.g. `hello-world`). Leave empty when Deploy All is on | No | — |
-| `DeployAll` | Deploy all functions in `supabase/functions/` with `--all` | No | `false` |
-| `VerifyJwt` | Enforce JWT verification on the function. Set to `false` to pass `--no-verify-jwt` | No | `true` |
-| `SmokeTest` | Perform an HTTP GET after deploy and assert the expected status code | No | `false` |
-| `SmokeTestExpectedStatus` | HTTP status code considered a pass (e.g. `200` or `401`) | No | `200` |
-| `SupabaseCliVersion` | Version of the Supabase CLI to install | No | `latest` |
+| Parameter | Type | Required | Default |
+|-----------|------|----------|---------|
+| `SupabaseProjectRef` | String | Yes | — |
+| `SupabaseAccessToken` | Sensitive | Yes | — |
+| `SupabaseFunctionName` | String | No — leave empty to deploy all | — |
+| `SupabaseVerifyJWT` | Checkbox | No | `true` |
+| `SupabaseImportMapPath` | String | No | — |
+| `SupabaseSmokeTest` | Checkbox | No | `false` |
+| `SupabaseCliVersion` | String | No | `latest` |
+
+**Package Reference Required:**
+Attach a package named `supabase-migrations` to the step with **Extract package** enabled. The package must contain a `supabase/functions/` directory at its root.
 
 **Test scenarios:**
 
@@ -86,7 +106,7 @@ supabase/
 
 The GitHub Actions workflow (`.github/workflows/package-deployment.yml`) packages the `supabase/` directory and pushes it to the Octopus built-in feed as `supabase-migrations`, then creates a release automatically.
 
-The deployment process references the `supabase-migrations` package, extracted to the worker alongside the script. The step template uses `Octopus.Action.Package[supabase-migrations].ExtractedPath` to locate the migrations and functions directories at runtime.
+Both steps reference the `supabase-migrations` package, extracted to the worker alongside the script. The step templates use `Octopus.Action.Package[supabase-migrations].ExtractedPath` to locate the migrations and functions directories at runtime.
 
 ### Required Octopus variables
 
