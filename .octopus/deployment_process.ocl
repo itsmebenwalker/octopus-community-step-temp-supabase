@@ -2,14 +2,6 @@ step "supabase-run-migrations" {
     name = "Supabase - Run Migrations"
 
     action {
-        packages "supabase-migrations" {
-            acquisition_location = "Server"
-            package_id = "supabase-migrations"
-            properties = {
-                Extract = "True"
-                SelectionMode = "immediate"
-            }
-        }
         properties = {
             Octopus.Action.Template.Id = "ActionTemplates-10"
             Octopus.Action.Template.Version = "1"
@@ -17,6 +9,34 @@ step "supabase-run-migrations" {
             SupabaseCliVersion = "#{SupabaseCliVersion}"
             SupabaseDbPassword = "#{SupabaseDbPassword}"
             SupabaseProjectRef = "#{SupabaseProjectRef}"
+        }
+        worker_pool = "hosted-ubuntu"
+
+        packages "supabase-migrations" {
+            acquisition_location = "Server"
+            feed = "octopus-server-built-in"
+            package_id = "supabase-migrations"
+            properties = {
+                Extract = "True"
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
+
+step "supabase-deploy-edge-function" {
+    name = "Supabase - Deploy Edge Function"
+
+    action {
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-41"
+            Octopus.Action.Template.Version = "1"
+            SupabaseAccessToken = "#{SupabaseAccessToken}"
+            SupabaseCliVersion = "latest"
+            SupabaseDeployAll = "False"
+            SupabaseProjectRef = "#{SupabaseProjectRef}"
+            SupabaseSmokeTest = "False"
+            SupabaseVerifyJWT = "True"
         }
         worker_pool = "hosted-ubuntu"
     }
