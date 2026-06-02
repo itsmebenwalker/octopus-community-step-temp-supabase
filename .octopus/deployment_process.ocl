@@ -39,5 +39,15 @@ step "supabase-deploy-edge-function" {
             SupabaseVerifyJWT = "True"
         }
         worker_pool = "hosted-ubuntu"
+
+        packages "supabase-migrations" {
+            acquisition_location = "Server"
+            feed = "octopus-server-built-in"
+            package_id = "supabase-migrations"
+            properties = {
+                Extract = "True"
+                SelectionMode = "immediate"
+            }
+        }
     }
 }
