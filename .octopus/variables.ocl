@@ -3,5 +3,5 @@ variable "SupabaseCliVersion" {
 }
 
 variable "SupabaseProjectRef" {
-    value "etyuyjgzxnqxfenwjutt" {}
+    value "tgqoydayyvqtmzznwszx" {}
 }
