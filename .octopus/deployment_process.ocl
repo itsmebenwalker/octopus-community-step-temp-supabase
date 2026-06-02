@@ -34,7 +34,6 @@ step "supabase-deploy-edge-function" {
             SupabaseAccessToken = "#{SupabaseAccessToken}"
             SupabaseCliVersion = "latest"
             SupabaseDeployAll = "True"
-            SupabaseImportMapPath = " "
             SupabaseProjectRef = "#{SupabaseProjectRef}"
             SupabaseSmokeTest = "False"
             SupabaseVerifyJWT = "True"
