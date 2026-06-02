@@ -29,7 +29,7 @@ step "supabase-deploy-edge-function" {
 
     action {
         properties = {
-            Octopus.Action.Template.Id = "ActionTemplates-41"
+            Octopus.Action.Template.Id = "ActionTemplates-42"
             Octopus.Action.Template.Version = "1"
             SupabaseAccessToken = "#{SupabaseAccessToken}"
             SupabaseCliVersion = "latest"
