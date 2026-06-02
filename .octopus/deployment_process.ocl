@@ -31,8 +31,10 @@ step "supabase-deploy-edge-function" {
         properties = {
             Octopus.Action.Template.Id = "ActionTemplates-41"
             Octopus.Action.Template.Version = "1"
+            SupabaseAccessToken = "#{SupabaseAccessToken}"
             SupabaseCliVersion = "latest"
             SupabaseDeployAll = "False"
+            SupabaseProjectRef = "#{SupabaseProjectRef}"
             SupabaseSmokeTest = "False"
             SupabaseVerifyJWT = "True"
         }
