@@ -1,3 +1,24 @@
+step "supabase-set-secrets" {
+    name = "Supabase - Set Secrets"
+
+    action {
+        properties = {
+            Octopus.Action.Template.Id = "ActionTemplates-44"
+            Octopus.Action.Template.Version = "1"
+            SupabaseAccessToken = "#{SupabaseAccessToken}"
+            SupabaseCliVersion = "latest"
+            SupabaseListAfterSet = "True"
+            SupabaseProjectRef = "#{SupabaseProjectRef}"
+            SupabaseSecrets = <<-EOT
+                TEST_SECRET_1=#{SupabaseSecretVar1}
+                TEST_SECRET_2=#{SupabaseSecretVar2}
+                TEST_SECRET_3=#{SupabaseSecretVar3}
+                EOT
+        }
+        worker_pool = "hosted-ubuntu"
+    }
+}
+
 step "supabase-run-migrations" {
     name = "Supabase - Run Migrations"
 
